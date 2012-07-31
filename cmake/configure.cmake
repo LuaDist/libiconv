@@ -228,9 +228,10 @@ if ( APPLE )
 endif ()
 
 # From dist.info
+set ( PACKAGE "${DIST_NAME}" )
 set ( PACKAGE_BUGREPORT "https://github.com/LuaDist/Repository/issues" )
 set ( PACKAGE_NAME "${DIST_NAME}-${DIST_VERSION}" )
-set ( PACKAGE_STRING "${DIST_NAME}" )
+set ( PACKAGE_STRING "iconv" )
 set ( PACKAGE_TARNAME "${DIST_NAME}-${DIST_VERSION}.dist" )
 set ( PACKAGE_URL "${DIST_URL}" )
 set ( PACKAGE_VERSION "${DIST_VERSION}" )

@@ -27,7 +27,7 @@ configure_file ( srclib/uniwidth.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/uniwidt
 configure_file ( srclib/unitypes.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/unitypes.h )
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} include srclib )
-add_definitions ( -DHAVE_CONFIG_H -Drelocate=libiconv_relocate -Dset_relocation_prefix=libiconv_set_relocation_prefix -DENABLE_RELOCATABLE -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DBUILDING_DLL -DIN_LIBRARY )
+add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DBUILDING_DLL -DIN_LIBRARY )
 
 # libcharset
 set ( SRC_LIBCHARSET
@@ -35,7 +35,8 @@ set ( SRC_LIBCHARSET
   libcharset/lib/relocatable.c
 )
 
-add_library ( charset ${SRC_LIBCHARSET} )
+add_library ( charset STATIC ${SRC_LIBCHARSET} )
+set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
 
 # libicrt
 set ( SRC_LIBICRT 
@@ -66,11 +67,13 @@ set ( SRC_LIBICONV
 
 add_library ( iconv ${SRC_LIBICONV} )
 target_link_libraries ( iconv charset )
+set_target_properties ( iconv PROPERTIES COMPILE_FLAGS -DBUILDING_LIBICONV)
 
 add_executable ( iconvcli src/iconv_no_i18n.c )
 target_link_libraries ( iconvcli iconv icrt charset )
 set_target_properties ( iconvcli PROPERTIES OUTPUT_NAME iconv )
 
-install_library ( iconv charset )
+install_library ( iconv )
 install_executable ( iconvcli )
+install_header ( include/iconv.h )
 install_data ( README AUTHORS COPYING )
