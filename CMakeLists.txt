@@ -35,7 +35,7 @@ set ( SRC_LIBCHARSET
   libcharset/lib/relocatable.c
 )
 
-add_library ( charset STATIC ${SRC_LIBCHARSET} )
+add_library ( charset ${SRC_LIBCHARSET} )
 set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
 
 # libicrt
@@ -73,7 +73,7 @@ add_executable ( iconvcli src/iconv_no_i18n.c )
 target_link_libraries ( iconvcli iconv icrt charset )
 set_target_properties ( iconvcli PROPERTIES OUTPUT_NAME iconv )
 
-install_library ( iconv )
+install_library ( iconv charset )
 install_executable ( iconvcli )
 install_header ( include/iconv.h )
 install_data ( README AUTHORS COPYING )
