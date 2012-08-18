@@ -26,6 +26,12 @@ configure_file ( libcharset/include/libcharset.h.in ${CMAKE_CURRENT_SOURCE_DIR}/
 configure_file ( srclib/uniwidth.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/uniwidth.h )
 configure_file ( srclib/unitypes.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/unitypes.h )
 
+# Dirty fix for MinGW
+if ( MINGW )
+  add_definitions ( -DELOOP=0 -DHAVE_DECL_STRERROR_R=0 )
+  configure_file ( srclib/alloca.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/alloca.h )
+endif ()
+
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} include srclib )
 add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DBUILDING_DLL -DIN_LIBRARY )
 
