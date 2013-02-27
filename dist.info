@@ -1,0 +1,28 @@
+type = "x86_64"
+arch = "Ubuntu"
+author = "Bruno Haible"
+desc = "POSIX library, which converts a sequence of characters from one codeset into a sequence of corresponding characters in another codeset."
+name = "libiconv"
+maintainer = "Peter Drahoš"
+files = {
+Runtime = {
+[[lib/libiconv.so]],
+[[lib/libcharset.so]],
+[[bin/iconv]],
+}
+,
+Header = {
+[[include/iconv.h]],
+}
+,
+Data = {
+[[share/libiconv/README]],
+[[share/libiconv/AUTHORS]],
+[[share/libiconv/COPYING]],
+}
+,
+}
+
+license = "GPL"
+version = "1.14"
+url = "http://www.gnu.org/software/libiconv/"
