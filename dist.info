@@ -1,0 +1,33 @@
+type = "x86"
+arch = "Windows"
+author = "Bruno Haible"
+desc = "POSIX library, which converts a sequence of characters from one codeset into a sequence of corresponding characters in another codeset."
+name = "libiconv"
+maintainer = "Peter Drahoš"
+files = {
+Runtime = {
+[[bin\libiconv.dll]],
+[[bin\libcharset.dll]],
+[[bin\iconv.exe]],
+}
+,
+Data = {
+[[share\libiconv\README]],
+[[share\libiconv\AUTHORS]],
+[[share\libiconv\COPYING]],
+}
+,
+Library = {
+[[lib\libiconv.dll.a]],
+[[lib\libcharset.dll.a]],
+}
+,
+Header = {
+[[include\iconv.h]],
+}
+,
+}
+
+license = "GPL"
+url = "http://www.gnu.org/software/libiconv/"
+version = "1.14"
