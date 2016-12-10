@@ -22,7 +22,7 @@ set ( HAVE_WCHAR_T 0)
 # setup default include directories 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
-configure_file ( config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
+configure_file ( config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/include/config.h )
 
 iconv_configure_file (LIBRARY_NAME libiconv 
   INPUT include/iconv.h.build.in 
