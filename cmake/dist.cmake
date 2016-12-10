@@ -337,7 +337,7 @@ macro(iconv_configure_file)
   cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   
   if(MSVC)
-    string(TOUPPER ${arg_LIBRARY_NAME} arg_library_name_upper)
+    string(TOUPPER "lib${arg_LIBRARY_NAME}" arg_library_name_upper)
     set(HAVE_VISIBILITY
     "WIN32
       #if defined(${arg_LIBRARY_NAME}_EXPORTS)

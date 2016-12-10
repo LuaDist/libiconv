@@ -24,29 +24,33 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/include/config.h )
 
-iconv_configure_file (LIBRARY_NAME libiconv 
+iconv_configure_file (LIBRARY_NAME iconv 
   INPUT include/iconv.h.build.in 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
 
-iconv_configure_file (LIBRARY_NAME libiconv 
+iconv_configure_file (LIBRARY_NAME iconv 
   INPUT srclib/alloca.in.h 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/alloca.h )
 
-iconv_configure_file (LIBRARY_NAME libiconv 
+iconv_configure_file (LIBRARY_NAME iconv 
   INPUT include/iconv.h.build.in 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
 
-iconv_configure_file (LIBRARY_NAME libiconv 
+iconv_configure_file (LIBRARY_NAME iconv 
   INPUT srclib/unistd.in.h 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unistd.h @ONLY)
 
-iconv_configure_file (LIBRARY_NAME libiconv 
+iconv_configure_file (LIBRARY_NAME iconv 
   INPUT srclib/unitypes.in.h 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unitypes.h )
 
-iconv_configure_file (LIBRARY_NAME libcharset
+iconv_configure_file (LIBRARY_NAME charset
   INPUT libcharset/include/libcharset.h.in 
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/libcharset.h )
+
+iconv_configure_file (LIBRARY_NAME charset
+  INPUT libcharset/include/localcharset.h.build.in 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/localcharset.h )
 
 # Dirty fix for MinGW
 if ( MINGW )
@@ -63,13 +67,11 @@ set ( SRC_LIBCHARSET
   libcharset/lib/relocatable.c
 )
 
-if (MSVC)
-  add_library ( charset STATIC ${SRC_LIBCHARSET} )
-else()
-  add_library ( charset ${SRC_LIBCHARSET} )
+add_library ( charset ${SRC_LIBCHARSET} )
+if(NOT MSVC)
   target_compile_options(charset PRIVATE -DBUILDING_DLL)
 endif()
-target_compile_options ( charset PRIVATE -DBUILDING_LIBCHARSET)
+target_compile_options (charset PRIVATE -DBUILDING_LIBCHARSET)
 
 if (NOT MSVC)
   # libicrt
@@ -114,4 +116,5 @@ endif()
 install_library ( iconv charset )
 install_header ( ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
 install_header ( ${CMAKE_CURRENT_BINARY_DIR}/include/libcharset.h )
+install_header ( ${CMAKE_CURRENT_BINARY_DIR}/include/localcharset.h )
 install_data ( README AUTHORS COPYING )
