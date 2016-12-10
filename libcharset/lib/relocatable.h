@@ -32,11 +32,7 @@ extern "C" {
    this is a private .h file, we don't need to use __declspec(dllimport)
    in any case.  */
 #if HAVE_VISIBILITY && BUILDING_DLL
-# if !_MSC_VER
 # define RELOCATABLE_DLL_EXPORTED __attribute__((__visibility__("default")))
-# else
-# define RELOCATABLE_DLL_EXPORTED __declspec(dllexport)
-# endif
 #elif defined _MSC_VER && BUILDING_DLL
 # define RELOCATABLE_DLL_EXPORTED __declspec(dllexport)
 #else

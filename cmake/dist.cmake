@@ -328,18 +328,17 @@ macro(iconv_configure_file)
   set(multiValueArgs)
   cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   
-  string(TOUPPER ${arg_LIBRARY_NAME} arg_library_name_upper)
-  set(HAVE_VISIBILITY
-  "WIN32
-    #if defined(${arg_LIBRARY_NAME}_EXPORTS)
-      #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllexport)
-    #else
-      #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllimport)
-    #endif
-#elif true"
-  )
-  configure_file(
-    ${arg_INPUT}
-    ${arg_OUTPUT}
+  if(MSVC)
+    string(TOUPPER ${arg_LIBRARY_NAME} arg_library_name_upper)
+    set(HAVE_VISIBILITY
+    "WIN32
+      #if defined(${arg_LIBRARY_NAME}_EXPORTS)
+        #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllexport)
+      #else
+        #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllimport)
+      #endif
+  #elif true"
     )
+  endif()
+  configure_file(${arg_INPUT} ${arg_OUTPUT} @ONLY)
 endmacro()

@@ -11,8 +11,7 @@ include ( configure )
 
 # Options
 option ( ENABLE_EXTRA "Enable a few rarely used encodings" OFF)
-option ( ENABLE_NLS "Translation of program messages to the user's native
-   language is requested" OFF)
+option ( ENABLE_NLS "Translation of program messages to the user's native language is requested" OFF)
 #option ( ENABLE_RELOCATABLE "The package shall run at any location in the file system" ON )
 
 # iconv.h
@@ -20,27 +19,34 @@ set ( USE_MBSTATE_T 1 )
 set ( BROKEN_WCHAR_H 0 )
 set ( HAVE_WCHAR_T 0)
 
-configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
+# setup default include directories 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
-if(MSVC)
-  iconv_configure_file (LIBRARY_NAME libiconv 
-    INPUT include/iconv.h.build.in 
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/include/iconv.h )
+configure_file ( config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
-  iconv_configure_file (LIBRARY_NAME libcharset 
-    INPUT libcharset/include/libcharset.h.in 
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/include/libcharset.h )
-  
-  configure_file (srclib/alloca.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/alloca.h )
-  configure_file (srclib/unistd.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/unistd.h @ONLY)
-else()
-  configure_file (include/iconv.h.build.in ${CMAKE_CURRENT_SOURCE_DIR}/include/iconv.h )
-  configure_file (libcharset/include/libcharset.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/libcharset.h )
-endif()
+iconv_configure_file (LIBRARY_NAME libiconv 
+  INPUT include/iconv.h.build.in 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
 
-configure_file (srclib/uniwidth.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/uniwidth.h )
-configure_file (srclib/unitypes.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/unitypes.h )
+iconv_configure_file (LIBRARY_NAME libiconv 
+  INPUT srclib/alloca.in.h 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/alloca.h )
 
+iconv_configure_file (LIBRARY_NAME libiconv 
+  INPUT include/iconv.h.build.in 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
+
+iconv_configure_file (LIBRARY_NAME libiconv 
+  INPUT srclib/unistd.in.h 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unistd.h)
+
+iconv_configure_file (LIBRARY_NAME libiconv 
+  INPUT srclib/unitypes.in.h 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unitypes.h )
+
+iconv_configure_file (LIBRARY_NAME libcharset
+  INPUT libcharset/include/libcharset.h.in 
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/libcharset.h )
 
 # Dirty fix for MinGW
 if ( MINGW )
@@ -49,7 +55,7 @@ if ( MINGW )
 endif ()
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} include srclib )
-add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DBUILDING_DLL -DIN_LIBRARY )
+add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DIN_LIBRARY )
 
 # libcharset
 set ( SRC_LIBCHARSET
@@ -57,8 +63,13 @@ set ( SRC_LIBCHARSET
   libcharset/lib/relocatable.c
 )
 
-add_library ( charset STATIC ${SRC_LIBCHARSET} )
-set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
+if (MSVC)
+  add_library ( charset STATIC ${SRC_LIBCHARSET} )
+else()
+  add_library ( charset ${SRC_LIBCHARSET} )
+  target_compile_options(charset PRIVATE -DBUILDING_DLL)
+endif()
+target_compile_options ( charset PRIVATE -DBUILDING_LIBCHARSET)
 
 if (NOT MSVC)
   # libicrt
@@ -101,5 +112,6 @@ if(NOT MSVC)
 endif()
 
 install_library ( iconv charset )
-install_header ( include/iconv.h )
+install_header ( ${CMAKE_CURRENT_BINARY_DIR}/include/iconv.h )
+install_header ( ${CMAKE_CURRENT_BINARY_DIR}/include/libcharset.h )
 install_data ( README AUTHORS COPYING )
