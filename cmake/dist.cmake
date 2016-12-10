@@ -159,11 +159,16 @@ macro ( install_library )
       set_target_properties ( ${_file} PROPERTIES VERSION ${DIST_VERSION}
                               SOVERSION ${DIST_VERSION} )
     endif ()
-    install ( TARGETS ${_file}
+    install ( TARGETS ${_file} EXPORT iconv_targets
               RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
               LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime 
               ARCHIVE DESTINATION ${INSTALL_LIB} COMPONENT Library )
   endforeach()
+
+  install(EXPORT iconv_targets
+          DESTINATION cmake
+          COMPONENT cmake)
+
 endmacro ()
 
 # helper function for various install_* functions, for PATTERN/REGEX args.
@@ -319,3 +324,29 @@ set ( CPACK_PACKAGE_VERSION "${DIST_VERSION}")
 set ( CPACK_PACKAGE_VENDOR "LuaDist" )
 set ( CPACK_COMPONENTS_ALL Runtime Library Header Data Documentation Example Other )
 include ( CPack )
+
+## Configure file replacement that patches some header files when building on 
+## Microsoft Visual Studio Compilers 
+## If not MSVC this function will fall back to the default configure_file 
+## implementation from cmake 
+macro(iconv_configure_file)
+  include(CMakeParseArguments)
+  set(options)
+  set(oneValueArgs LIBRARY_NAME INPUT OUTPUT)
+  set(multiValueArgs)
+  cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  
+  if(MSVC)
+    string(TOUPPER "lib${arg_LIBRARY_NAME}" arg_library_name_upper)
+    set(HAVE_VISIBILITY
+    "WIN32
+      #if defined(${arg_LIBRARY_NAME}_EXPORTS)
+        #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllexport)
+      #else
+        #define ${arg_library_name_upper}_DLL_EXPORTED __declspec(dllimport)
+      #endif
+  #elif true"
+    )
+  endif()
+  configure_file(${arg_INPUT} ${arg_OUTPUT} ${arg_UNPARSED_ARGUMENTS})
+endmacro()
