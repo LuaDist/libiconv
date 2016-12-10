@@ -325,7 +325,10 @@ set ( CPACK_PACKAGE_VENDOR "LuaDist" )
 set ( CPACK_COMPONENTS_ALL Runtime Library Header Data Documentation Example Other )
 include ( CPack )
 
-
+## Configure file replacement that patches some header files when building on 
+## Microsoft Visual Studio Compilers 
+## If not MSVC this function will fall back to the default configure_file 
+## implementation from cmake 
 macro(iconv_configure_file)
   include(CMakeParseArguments)
   set(options)
@@ -345,5 +348,5 @@ macro(iconv_configure_file)
   #elif true"
     )
   endif()
-  configure_file(${arg_INPUT} ${arg_OUTPUT} @ONLY)
+  configure_file(${arg_INPUT} ${arg_OUTPUT} ${arg_UNPARSED_ARGUMENTS})
 endmacro()

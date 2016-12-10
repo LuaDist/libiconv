@@ -38,7 +38,7 @@ iconv_configure_file (LIBRARY_NAME libiconv
 
 iconv_configure_file (LIBRARY_NAME libiconv 
   INPUT srclib/unistd.in.h 
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unistd.h)
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srclib/unistd.h @ONLY)
 
 iconv_configure_file (LIBRARY_NAME libiconv 
   INPUT srclib/unitypes.in.h 
