@@ -159,11 +159,16 @@ macro ( install_library )
       set_target_properties ( ${_file} PROPERTIES VERSION ${DIST_VERSION}
                               SOVERSION ${DIST_VERSION} )
     endif ()
-    install ( TARGETS ${_file}
+    install ( TARGETS ${_file} EXPORT iconv_targets
               RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
               LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime 
               ARCHIVE DESTINATION ${INSTALL_LIB} COMPONENT Library )
   endforeach()
+
+  install(EXPORT iconv_targets
+          DESTINATION cmake
+          COMPONENT cmake)
+
 endmacro ()
 
 # helper function for various install_* functions, for PATTERN/REGEX args.
