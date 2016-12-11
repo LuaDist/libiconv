@@ -68,12 +68,12 @@ set ( SRC_LIBCHARSET
 )
 
 add_library ( charset ${SRC_LIBCHARSET} )
-if(NOT MSVC)
-  target_compile_options(charset PRIVATE -DBUILDING_DLL)
+if ( NOT MSVC )
+  target_compile_options (charset PRIVATE -DBUILDING_DLL)
 endif()
 target_compile_options (charset PRIVATE -DBUILDING_LIBCHARSET)
 
-if (NOT MSVC)
+if ( NOT MSVC )
   # libicrt
   set ( SRC_LIBICRT 
     srclib/allocator.c
@@ -111,6 +111,12 @@ if(NOT MSVC)
   set_target_properties ( iconvcli PROPERTIES OUTPUT_NAME iconv )
 
   install_executable ( iconvcli )
+endif()
+
+# fix library naming for Visual Studio compilers
+if(MSVC)
+  set_target_properties ( iconv   PROPERTIES OUTPUT_NAME "libiconv" )
+  set_target_properties ( charset PROPERTIES OUTPUT_NAME "libcharset" )
 endif()
 
 install_library ( iconv charset )
